@@ -1,0 +1,23 @@
+before_script:
+  - echo $CI_BUILD_REF
+  - echo $CI_PROJECT_DIR
+
+stages:
+  - copy-code
+  - build
+
+copy:
+  stage: copy-code
+  tags:
+    - titan
+  script:
+    - cp -r $CI_PROJECT_DIR/app/** /srv/vector/app/
+
+build:
+  stage: build
+  tags:
+    - titan
+  script:
+    - PROJECT_PATH=/srv/vector docker-compose build
+    - PROJECT_PATH=/srv/vector docker-compose up -d --force-recreate
+
