@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  server:
+    container_name: "vector.sdk"
+    image: brushknight/vector-sdk-docker
+    volumes:
+      - code:/app/code
+      - configs:/root/.anki_vector/
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+
+volumes:
+  code:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PROJECT_PATH/app
+      o: bind
+  configs:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PROJECT_PATH/configs # path to configs to be located
+      o: bind
