@@ -7,10 +7,13 @@ services:
     volumes:
       - code:/app/code
       - configs:/root/.anki_vector/
+    ports:
+      - "8013:5000"
     logging:
       driver: json-file
       options:
         max-size: 100m
+    command: python /app/code/web-api.py
 
 volumes:
   code:

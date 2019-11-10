@@ -20,4 +20,5 @@ build:
   script:
     - PROJECT_PATH=/srv/vector docker-compose build
     - PROJECT_PATH=/srv/vector docker-compose up -d --force-recreate
+    - PROJECT_PATH=/srv/vector docker exec vector.sdk pip install -r /app/code/requirements.txt
 
