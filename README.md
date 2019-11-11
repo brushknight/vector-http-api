@@ -18,3 +18,11 @@ In local
 - [x] Get battery state: GET `/api/vector/battery`
 - [x] Say some text: GET `/api/vector/say?text=Hello`
 - [x] Set volume level: GET `/api/vector/volume/<level>` level: 0-4
+- [x] Behavior: Drive on charger`/api/behavior/drive_on_charger`
+- [x] Behavior: Drive off charger`/api/behavior/drive_off_charger`
+- [ ] Set eyes color
+- [ ] Animation: Play
+- [ ] Animation: Get animations list
+- [ ] Animation: Play trigger
+- [ ] Animation: Get animations triggers list
+- [ ] ...

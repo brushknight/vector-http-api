@@ -34,11 +34,19 @@ def set_volume(level):
         4: audio.RobotVolumeLevel.HIGH,
     }
 
+    lavels_labels = {
+        0: "low (0)",
+        1: "medium low (1)",
+        2: "medium (2)",
+        3: "medium high (3)",
+        4: "high (4)",
+    }
+
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.audio.set_master_volume(levels[int(level)])
 
-    return "executed"
+    return "Volume set to " + lavels_labels[int(level)]
 
 
 @app.route('/api/vector/battery')
@@ -66,6 +74,24 @@ def get_battery_state():
             }
 
     return str(json.dumps(response))
+
+
+@app.route('/api/behavior/drive_on_charger')
+def behavior_drive_on_charger():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.behavior.drive_on_charger()
+
+    return "executed"
+
+
+@app.route('/api/behavior/drive_foo_charger')
+def behavior_drive_off_charger():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.behavior.drive_off_charger()
+
+    return "executed"
 
 
 if __name__ == '__main__':
