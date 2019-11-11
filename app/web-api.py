@@ -7,7 +7,6 @@ from anki_vector import audio
 app = Flask(__name__)
 
 
-# get account balance and last update
 @app.route('/api/vector/say')
 def say_text():
     text = request.args.get('text')
@@ -21,7 +20,7 @@ def say_text():
 
     return "executed"
 
-# get account balance and last update
+
 @app.route('/api/vector/volume/<level>')
 def set_volume(level):
     if int(level) < 0 or int(level) > 4:
@@ -41,7 +40,7 @@ def set_volume(level):
 
     return "executed"
 
-# get account balance and last update
+
 @app.route('/api/vector/battery')
 def get_battery_state():
     args = anki_vector.util.parse_command_args()
@@ -67,6 +66,7 @@ def get_battery_state():
             }
 
     return str(json.dumps(response))
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
