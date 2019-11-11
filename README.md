@@ -15,14 +15,14 @@ In local
 
 ## API
 
-- [x] Get battery state: GET `/api/vector/battery`
-- [x] Say some text: GET `/api/vector/say?text=Hello`
-- [x] Set volume level: GET `/api/vector/volume/<level>` level: 0-4
-- [x] Behavior: Drive on charger`/api/behavior/drive_on_charger`
-- [x] Behavior: Drive off charger`/api/behavior/drive_off_charger`
+- [x] Get battery state: GET `/api/battery`
+- [x] Say some text: GET `/api/say?text=Hello`
+- [x] Set volume level: GET `/api/volume/<level>` level: 0-4
+- [x] Behavior: Drive on charger: GET `/api/behavior/drive_on_charger`
+- [x] Behavior: Drive off charger: GET `/api/behavior/drive_off_charger`
 - [ ] Set eyes color
-- [ ] Animation: Play
-- [ ] Animation: Get animations list
-- [ ] Animation: Play trigger
-- [ ] Animation: Get animations triggers list
+- [x] Animation: Play: GET `/api/animation/<animation_id>`
+- [x] Animation: Get animations list GET `/api/animation/list`
+- [x] Animation: Play trigger GET `/api/animation-trigger/<animation_id>`
+- [x] Animation: Get animations triggers list GET `/api/animation-trigger/list`
 - [ ] ...

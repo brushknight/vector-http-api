@@ -7,7 +7,7 @@ from anki_vector import audio
 app = Flask(__name__)
 
 
-@app.route('/api/vector/say')
+@app.route('/api/say')
 def say_text():
     text = request.args.get('text')
 
@@ -21,7 +21,7 @@ def say_text():
     return "executed"
 
 
-@app.route('/api/vector/volume/<level>')
+@app.route('/api/volume/<level>')
 def set_volume(level):
     if int(level) < 0 or int(level) > 4:
         return "level should be from 0 to 4"
@@ -49,7 +49,7 @@ def set_volume(level):
     return "Volume set to " + lavels_labels[int(level)]
 
 
-@app.route('/api/vector/battery')
+@app.route('/api/battery')
 def get_battery_state():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
@@ -85,7 +85,7 @@ def behavior_drive_on_charger():
     return "executed"
 
 
-@app.route('/api/behavior/drive_foo_charger')
+@app.route('/api/behavior/drive_off_charger')
 def behavior_drive_off_charger():
     args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
@@ -93,6 +93,44 @@ def behavior_drive_off_charger():
 
     return "executed"
 
+
+@app.route('/api/animation/list')
+def animation_list():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.AsyncRobot(args.serial) as robot:
+        anim_request = robot.anim.load_animation_list()
+        anim_request.result()
+        anim_names = robot.anim.anim_list
+        return str(json.dumps(anim_names))
+
+
+#@TODO should be post
+@app.route('/api/animation/<animation_id>')
+def animation_play(animation_id):
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.anim.play_animation(animation_id)
+        return "executed"
+
+
+
+@app.route('/api/animation-trigger/list')
+def animation_trigger_list():
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.AsyncRobot(args.serial) as robot:
+        anim_trigger_request = robot.anim.load_animation_trigger_list()
+        anim_trigger_request.result()
+        anim_trigger_names = robot.anim.anim_trigger_list
+        return str(json.dumps(anim_trigger_names))
+
+
+#@TODO should be post
+@app.route('/api/animation-trigger/<animation_id>')
+def animation_trigger_play(animation_id):
+    args = anki_vector.util.parse_command_args()
+    with anki_vector.Robot(args.serial) as robot:
+        robot.anim.play_animation_trigger(animation_id)
+        return "executed"
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
