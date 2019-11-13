@@ -28,3 +28,8 @@ In local
 - [ ] More Behaviors
 - [ ] Set eyes color
 - [ ] ...
+
+Fancy (custom methods) API
+
+- [x] Notify about gitlab pipline passed GET `/api/fancy/gitlab-build-finished`
+- [x] Get status resting/active GET `/api/fancy/status`
