@@ -20,9 +20,11 @@ In local
 - [x] Set volume level: GET `/api/volume/<level>` level: 0-4
 - [x] Behavior: Drive on charger: GET `/api/behavior/drive_on_charger`
 - [x] Behavior: Drive off charger: GET `/api/behavior/drive_off_charger`
-- [ ] Set eyes color
 - [x] Animation: Play: GET `/api/animation/<animation_id>`
 - [x] Animation: Get animations list GET `/api/animation/list`
 - [x] Animation: Play trigger GET `/api/animation-trigger/<animation_id>`
 - [x] Animation: Get animations triggers list GET `/api/animation-trigger/list`
+- [x] Status GET `/api/status`
+- [ ] More Behaviors
+- [ ] Set eyes color
 - [ ] ...

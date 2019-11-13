@@ -6,6 +6,8 @@ from anki_vector import audio
 
 app = Flask(__name__)
 
+args = anki_vector.util.parse_command_args()
+
 
 @app.route('/api/say')
 def say_text():
@@ -14,7 +16,6 @@ def say_text():
     if not text:
         return "text required"
 
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.say_text(text)
 
@@ -42,7 +43,6 @@ def set_volume(level):
         4: "high (4)",
     }
 
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.audio.set_master_volume(levels[int(level)])
 
@@ -51,10 +51,9 @@ def set_volume(level):
 
 @app.route('/api/battery')
 def get_battery_state():
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.Robot(args.serial) as robot:
+    with anki_vector.Robot(args.serial, behavior_control_level=None) as robot:
         print("Connecting to a cube...")
-        robot.world.connect_cube()
+        # robot.world.connect_cube()
         battery_state = robot.get_battery_state()
         if battery_state:
             response = {}
@@ -66,19 +65,18 @@ def get_battery_state():
                 'is_on_charger_platform': battery_state.is_on_charger_platform,
                 'suggested_charger_sec': battery_state.suggested_charger_sec,
             }
-            response['cube'] = {
-                'volts': battery_state.cube_battery.battery_volts,
-                'level': battery_state.cube_battery.level,
-                'time_since_last_reading_sec': battery_state.cube_battery.time_since_last_reading_sec,
-                'factory_id': battery_state.cube_battery.factory_id,
-            }
+            # response['cube'] = {
+            #     'volts': battery_state.cube_battery.battery_volts,
+            #     'level': battery_state.cube_battery.level,
+            #     'time_since_last_reading_sec': battery_state.cube_battery.time_since_last_reading_sec,
+            #     'factory_id': battery_state.cube_battery.factory_id,
+            # }
 
     return str(json.dumps(response))
 
 
 @app.route('/api/behavior/drive_on_charger')
 def behavior_drive_on_charger():
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_on_charger()
 
@@ -87,7 +85,6 @@ def behavior_drive_on_charger():
 
 @app.route('/api/behavior/drive_off_charger')
 def behavior_drive_off_charger():
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.behavior.drive_off_charger()
 
@@ -96,41 +93,61 @@ def behavior_drive_off_charger():
 
 @app.route('/api/animation/list')
 def animation_list():
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.AsyncRobot(args.serial) as robot:
+    with anki_vector.AsyncRobot(args.serial, behavior_control_level=None) as robot:
         anim_request = robot.anim.load_animation_list()
         anim_request.result()
         anim_names = robot.anim.anim_list
         return str(json.dumps(anim_names))
 
 
-#@TODO should be post
+# @TODO should be post
 @app.route('/api/animation/<animation_id>')
 def animation_play(animation_id):
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.anim.play_animation(animation_id)
         return "executed"
 
 
-
 @app.route('/api/animation-trigger/list')
 def animation_trigger_list():
-    args = anki_vector.util.parse_command_args()
-    with anki_vector.AsyncRobot(args.serial) as robot:
+    with anki_vector.AsyncRobot(args.serial, behavior_control_level=None) as robot:
         anim_trigger_request = robot.anim.load_animation_trigger_list()
         anim_trigger_request.result()
         anim_trigger_names = robot.anim.anim_trigger_list
         return str(json.dumps(anim_trigger_names))
 
 
-#@TODO should be post
+# @TODO should be post
 @app.route('/api/animation-trigger/<animation_id>')
 def animation_trigger_play(animation_id):
-    args = anki_vector.util.parse_command_args()
     with anki_vector.Robot(args.serial) as robot:
         robot.anim.play_animation_trigger(animation_id)
         return "executed"
+
+
+@app.route('/api/status/')
+def get_status():
+    current_states = []
+
+    with anki_vector.Robot(args.serial, behavior_control_level=None) as robot:
+        if robot.status.is_on_charger: current_states.append("is_on_charger")
+        if robot.status.are_motors_moving: current_states.append("are_motors_moving")
+        if robot.status.are_wheels_moving: current_states.append("are_wheels_moving")
+        if robot.status.is_animating: current_states.append("is_animating")
+        if robot.status.is_being_held: current_states.append("is_being_held")
+        if robot.status.is_button_pressed: current_states.append("is_button_pressed")
+        if robot.status.is_carrying_block: current_states.append("is_carrying_block")
+        if robot.status.is_charging: current_states.append("is_charging")
+        if robot.status.is_cliff_detected: current_states.append("is_cliff_detected")
+        if robot.status.is_docking_to_marker: current_states.append("is_docking_to_marker")
+        if robot.status.is_falling: current_states.append("is_falling")
+        if robot.status.is_head_in_pos: current_states.append("is_head_in_pos")
+        if robot.status.is_in_calm_power_mode: current_states.append("is_in_calm_power_mode")
+        if robot.status.is_lift_in_pos: current_states.append("is_lift_in_pos")
+        if robot.status.is_pathing: current_states.append("is_pathing")
+        if robot.status.is_picked_up: current_states.append("is_picked_up")
+        if robot.status.is_robot_moving: current_states.append("is_robot_moving")
+        return str(json.dumps(current_states))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
