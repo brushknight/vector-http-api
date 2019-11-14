@@ -105,7 +105,7 @@ def animation_list():
         anim_request = robot.anim.load_animation_list()
         anim_request.result()
         anim_names = robot.anim.anim_list
-        return str(json.dumps(anim_names))
+    return str(json.dumps(anim_names))
 
 
 # @TODO should be post
@@ -113,7 +113,7 @@ def animation_list():
 def animation_play(animation_id):
     with anki_vector.Robot(args.serial) as robot:
         robot.anim.play_animation(animation_id)
-        return "executed"
+    return "executed"
 
 
 @app.route('/api/animation-trigger/list')
@@ -122,7 +122,7 @@ def animation_trigger_list():
         anim_trigger_request = robot.anim.load_animation_trigger_list()
         anim_trigger_request.result()
         anim_trigger_names = robot.anim.anim_trigger_list
-        return Response((json.dumps(anim_trigger_names)), mimetype='application/json')
+    return Response((json.dumps(anim_trigger_names)), mimetype='application/json')
 
 
 # @TODO should be post
@@ -130,7 +130,7 @@ def animation_trigger_list():
 def animation_trigger_play(animation_id):
     with anki_vector.Robot(args.serial) as robot:
         robot.anim.play_animation_trigger(animation_id)
-        return "executed"
+    return "executed"
 
 
 @app.route('/api/status/')
@@ -156,35 +156,42 @@ def get_status():
         if robot.status.is_pathing: current_states.append("is_pathing")
         if robot.status.is_picked_up: current_states.append("is_picked_up")
         if robot.status.is_robot_moving: current_states.append("is_robot_moving")
-        return Response((json.dumps(current_states)), mimetype='application/json')
+    return Response((json.dumps(current_states)), mimetype='application/json')
 
 
 @app.route('/api/fancy/gitlab-build-finished')
 def fancy_gitlab_build_success():
-    with anki_vector.Robot(args.serial) as robot:
-        robot.anim.play_animation_trigger("ReactToTriggerWordOffChargerFrontLeft")
-        robot.screen.set_screen_to_color(anki_vector.color.Color(rgb=[50, 119, 168]), duration_sec=6.0)
-        robot.behavior.say_text("Gitlab build finished, check your app.")
-        return "executed"
+    robot = anki_vector.Robot(args.serial)
+    robot.connect()
+
+    robot.anim.play_animation_trigger("ReactToTriggerWordOffChargerFrontLeft")
+    robot.screen.set_screen_to_color(anki_vector.color.Color(rgb=[50, 119, 168]), duration_sec=6.0)
+    robot.behavior.say_text("Gitlab build finished, check your app.")
+    robot.disconnect()
+    return "executed"
 
 
 @app.route('/api/fancy/status')
 def fancy_status():
     response = {}
+    robot = anki_vector.Robot(args.serial, behavior_control_level=None)
+    robot.connect()
 
-    with anki_vector.Robot(args.serial, behavior_control_level=None) as robot:
-        if robot.status.is_charging:
-            response['status'] = 'charging'
-        if robot.status.is_robot_moving and robot.status.are_wheels_moving:
-            response['status'] = 'exploring'
-        if robot.status.is_on_charger \
-                and robot.status.is_head_in_pos \
-                and robot.status.is_in_calm_power_mode \
-                and robot.status.is_lift_in_pos:
-            response['status'] = 'sleeping'
-        else:
-            response['status'] = 'active'
-        return Response(json.dumps(response), mimetype='application/json')
+    if robot.status.is_charging:
+        response['status'] = 'charging'
+    if robot.status.is_robot_moving and robot.status.are_wheels_moving:
+        response['status'] = 'exploring'
+    if robot.status.is_on_charger \
+            and robot.status.is_head_in_pos \
+            and robot.status.is_in_calm_power_mode \
+            and robot.status.is_lift_in_pos:
+        response['status'] = 'sleeping'
+    else:
+        response['status'] = 'active'
+
+    robot.disconnect()
+
+    return Response(json.dumps(response), mimetype='application/json')
 
 
 if __name__ == '__main__':
