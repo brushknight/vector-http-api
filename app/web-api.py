@@ -173,6 +173,10 @@ def fancy_status():
     response = {}
 
     with anki_vector.Robot(args.serial, behavior_control_level=None) as robot:
+        if robot.status.is_charging:
+            response['status'] = 'charging'
+        if robot.status.is_robot_moving and robot.status.are_wheels_moving:
+            response['status'] = 'exploring'
         if robot.status.is_on_charger \
                 and robot.status.is_head_in_pos \
                 and robot.status.is_in_calm_power_mode \
